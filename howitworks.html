@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Responsive meta tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>igoon.org | How It Works</title>
+  <!-- Google Font for a modern look -->
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #000;
+      --hover-primary: #333;
+      --bg-color: #fff;
+      --text-color: #000;
+    }
+    /* Global Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    /* Base Body Styling */
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    /* Header styling with navigation */
+    header {
+      width: 100%;
+      padding: 20px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-color);
+      border-bottom: 1px solid #ddd;
+    }
+    header .logo {
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+    header nav {
+      display: flex;
+      gap: 20px;
+    }
+    header nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    header nav a:hover {
+      color: var(--hover-primary);
+    }
+    /* Main Container for Content */
+    .container {
+      max-width: 800px;
+      margin-top: 40px;
+      line-height: 1.6;
+      font-size: 1.1rem;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      text-align: center;
+    }
+    section {
+      margin-bottom: 40px;
+    }
+    /* Footer styling */
+    footer {
+      margin-top: auto;
+      padding: 20px 0;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      border-top: 1px solid #ddd;
+    }
+    .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 30px;
+      background-color: var(--primary-color);
+      color: var(--bg-color);
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .button:hover {
+      background-color: var(--hover-primary);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Section -->
+  <header>
+    <div class="logo">igoon.org</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="howitworks.html">How It Works</a>
+      <a href="chat.html">Chat</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <!-- Main Content Container -->
+  <div class="container">
+    <h1>How It Works</h1>
+    <section>
+      <h2>Chat Generation</h2>
+      <p>
+        Our platform integrates a dynamic chat system powered by a custom persona. When you send a message, it’s combined with a uniquely styled persona prompt and passed to a language model via a backend command, resulting in engaging, unpredictable, and characterful responses.
+      </p>
+    </section>
+    <section>
+      <h2>Boot Animation</h2>
+      <p>
+        Experience a sleek boot animation where each letter of the logo appears sequentially. This modern animation not only sets the mood but also provides a brief, eye-catching introduction before redirecting you to the main content.
+      </p>
+    </section>
+    <section>
+      <h2>System Debug & Monitoring</h2>
+      <p>
+        Behind the scenes, our debug endpoint uses system calls to provide real-time stats on CPU, RAM, disk usage, ping, and WiFi status. This ensures that the service runs optimally and transparently.
+      </p>
+    </section>
+    <section>
+      <h2>How to Interact</h2>
+      <p>
+        Simply click on the 'Chat' link in the navigation menu or the "Chat Now" button on the home page. Your messages are processed instantly and streamed live, giving you a unique conversational experience.
+      </p>
+    </section>
+    <a href="chat.html" class="button">Start Chatting</a>
+  </div>
+
+  <!-- Footer Section -->
+  <footer>
+    &copy; 2025 igoon.org. All rights reserved.
+  </footer>
+</body>
+</html>
