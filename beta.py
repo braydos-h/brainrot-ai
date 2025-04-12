@@ -117,7 +117,7 @@ def generate():
     # Append the user message to chat history
     chat_history.append({"sender": "user", "text": user_text})
     combined_prompt = f"{selected_prompt}\n\n{user_text}"
-    cmd = ["ollama", "run", "qwen2.5:3b", combined_prompt]
+    cmd = ["ollama", "run", "qwen2.5:1.5b", combined_prompt]
 
     def generate_stream():
         try:
