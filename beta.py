@@ -115,6 +115,11 @@ def generate():
         selected_prompt = BRAINROT_PROMPT
 
     # Append the user message to chat history
+    #im gonna add the option to save the chat history to a file
+    # chat_history.append({"sender": "assistant", "text": selected_prompt})
+    # chat_history.append({"sender": "assistant", "text": "brainrot mode activated"})
+    # chat_history.append({"sender": "assistant", "text": "nerd mode activated"})
+    # chat_history.append({"sender": "assistant", "text": "max brainrot mode activated"})
     chat_history.append({"sender": "user", "text": user_text})
     combined_prompt = f"{selected_prompt}\n\n{user_text}"
     cmd = ["ollama", "run", "qwen2.5:1.5b", combined_prompt]
