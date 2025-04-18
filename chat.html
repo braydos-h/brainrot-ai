@@ -1,471 +1,191 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>BrainRot AI Chat – Unleash Your Emotions</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Optionally load a modern monospaced font -->
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-      :root {
-        --bg-color: #121212;
-        --header-bg: #1e1e1e;
-        --accent-color: #bb86fc;
-        --text-color: #e0e0e0;
-        --muted-color: #aaa;
-        --user-msg-bg: #333;
-        --ai-msg-bg: #1e1e1e;
-        --input-bg: #2e2e2e;
-        --font-family: 'Fira Code', 'Courier New', monospace;
-      }
+<head>
+<meta charset="utf-8" />
+<title>BrainRot AI Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-      /* Global reset */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+<!--  Google mono font -->
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&display=swap" rel="stylesheet" />
 
-      /* Smooth fade-in animation */
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+<!--  Tailwind CSS CDN + Heroicons -->
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: { mono: ['Fira Code', 'monospace'] },
+      colors: {
+        accent1: '#7c3aed', accent2: '#6366f1',
+        userBubble: '#4f46e5'
       }
+    }
+  }
+}
+</script>
+</head>
 
-      body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-        font-family: var(--font-family);
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        animation: fadeIn 1.5s ease-in;
-      }
+<body class="dark font-mono flex h-screen overflow-hidden">
 
-      header {
-        background-color: var(--header-bg);
-        padding: 20px;
-        text-align: center;
-        position: relative;
-        animation: fadeIn 2s ease-in;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
+<!-- ——————————————————  SIDE BAR  (slides in on < md) —————————————————— -->
+<aside id="sidebar" class="fixed md:static inset-y-0 left-0 md:translate-x-0 -translate-x-full md:w-64 w-60 bg-zinc-900/90 backdrop-blur text-zinc-100 transition-transform z-40">
+  <div class="flex items-center gap-3 px-4 py-4 border-b border-zinc-700">
+    <img class="w-11 h-11 rounded-full" src="https://i.pinimg.com/736x/d8/99/5d/d8995dedd69d6972e4ea144ba27db6f8.jpg" alt="">
+    <div>
+      <p class="font-semibold text-lg leading-tight">BrainRot AI</p>
+      <p class="text-xs text-accent2 uppercase tracking-wide">multi‑persona chat</p>
+    </div>
+  </div>
 
-      header img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 10px;
-        animation: fadeIn 2s ease-in;
-      }
+  <!-- Persona buttons -->
+  <div class="px-4 py-6 space-y-2" id="modeSelector">
+    <button class="mode-button active w-full flex items-center gap-2 px-4 py-2 rounded-lg bg-accent2 hover:bg-accent1 transition text-white" data-mode="nerd">
+      🧠 <span>Nerd Mode</span></button>
+    <button class="mode-button w-full flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-zinc-700 transition" data-mode="brainrot">
+      🌀 <span>Brainrot</span></button>
+    <button class="mode-button w-full flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-zinc-700 transition" data-mode="maxbrainrot">
+      💀 <span>Max Brainrot</span></button>
+  </div>
 
-      header .title-container {
-        text-align: left;
-        flex: 1;
-      }
+  <!-- Live stats -->
+  <div class="px-4">
+    <h3 class="text-xs text-accent2 font-bold mb-2 uppercase tracking-wide">System Stats</h3>
+    <div class="grid grid-cols-2 gap-2 text-xs text-center">
+      <div class="bg-zinc-800/60 rounded-md p-2">CPU<br><span id="cpuUsage">--</span>%</div>
+      <div class="bg-zinc-800/60 rounded-md p-2">RAM<br><span id="ramUsage">--</span>%</div>
+      <div class="bg-zinc-800/60 rounded-md p-2">Disk<br><span id="diskUsage">--</span>%</div>
+      <div class="bg-zinc-800/60 rounded-md p-2">Ping<br><span id="ping">--</span> ms</div>
+      <div class="bg-zinc-800/60 rounded-md p-2 col-span-2">Wi‑Fi / Users<br><span id="wifi">--</span> / <span id="onlineCount">--</span></div>
+    </div>
+  </div>
 
-      header .title {
-        font-size: 2em;
-        letter-spacing: 0.05em;
-      }
+  <!-- Glossary trigger -->
+  <div class="mt-auto px-4 py-6">
+    <button id="openGlossary" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-zinc-800/70 hover:bg-zinc-700 transition">
+      📖 Slang Glossary
+    </button>
+  </div>
+</aside>
 
-      header .tagline {
-        font-size: 0.9em;
-        color: var(--muted-color);
-        margin-top: 5px;
-      }
+<!-- ——————————————————  MAIN PANEL  —————————————————— -->
+<div class="flex-1 flex flex-col">
 
-      header .glossary-btn {
-        padding: 6px 12px;
-        border: none;
-        border-radius: 5px;
-        background-color: var(--ai-msg-bg);
-        color: var(--text-color);
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-      }
-      
-      header .glossary-btn:hover {
-        background-color: var(--accent-color);
-        transform: translateY(-2px);
-      }
+  <!-- Top bar -->
+  <header class="flex items-center justify-between gap-3 px-4 py-3 backdrop-blur bg-white/60 dark:bg-zinc-900/70 border-b border-zinc-200 dark:border-zinc-700">
+    <button id="toggleSidebar" class="md:hidden text-xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <h1 class="text-sm font-semibold text-accent2">Chat</h1>
+    <div class="flex items-center gap-2">
+      <button id="openGlossaryTop" title="Glossary" class="hidden md:block text-lg px-2 py-1 rounded hover:bg-zinc-300/30 dark:hover:bg-zinc-700/50">📖</button>
+      <button id="themeToggle" title="Toggle theme" class="text-lg px-2 py-1 rounded hover:bg-zinc-300/30 dark:hover:bg-zinc-700/50">🌓</button>
+    </div>
+    <div id="progress" class="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-accent1 to-accent2 w-0"></div>
+  </header>
 
-      .chat-container {
-        flex: 1;
-        padding: 20px;
-        overflow-y: auto;
-        background-color: var(--bg-color);
-      }
-
-      .message {
-        max-width: 70%;
-        padding: 12px 18px;
-        margin: 10px 0;
-        border-radius: 10px;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        animation: fadeIn 1s ease-in;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-      }
-
-      .ai {
-        background-color: var(--ai-msg-bg);
-        align-self: flex-start;
-      }
-
-      .user {
-        background-color: var(--user-msg-bg);
-        align-self: flex-end;
-      }
-
-      .form-container {
-        padding: 20px;
-        background-color: var(--header-bg);
-        animation: fadeIn 2s ease-in;
-        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.6);
-      }
-
-      form {
-        margin: 0 0 10px 0;
-      }
-
-      textarea {
-        width: 100%;
-        min-height: 80px;
-        padding: 12px;
-        border: none;
-        border-radius: 5px;
-        resize: vertical;
-        background-color: var(--input-bg);
-        color: var(--text-color);
-        font-size: 1em;
-        font-family: var(--font-family);
-      }
-
-      button {
-        display: inline-block;
-        margin-top: 10px;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 5px;
-        background-color: var(--ai-msg-bg);
-        color: var(--text-color);
-        font-size: 1em;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-      }
-
-      button:hover {
-        background-color: var(--accent-color);
-        transform: translateY(-2px);
-      }
-
-      .clear-button {
-        background-color: #555;
-      }
-
-      /* Loading bar styles */
-      #loadingBar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 4px;
-        background-color: var(--text-color);
-        width: 0%;
-        transition: width 0.3s ease;
-        z-index: 1001;
-      }
-
-      /* Debug panel styles */
-      #debugPanel {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        background-color: rgba(30, 30, 30, 0.9);
-        color: var(--muted-color);
-        padding: 10px;
-        font-size: 0.8em;
-        z-index: 1001;
-        border-top-left-radius: 8px;
-        line-height: 1.4em;
-      }
-
-      /* Slang Glossary Modal Styles */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.85);
-        animation: fadeIn 0.5s ease-in;
-      }
-
-      .modal-content {
-        background-color: var(--header-bg);
-        margin: 10% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        border-radius: 10px;
-        color: var(--text-color);
-        max-height: 60%;
-        overflow-y: auto;
-      }
-
-      .modal-content h2 {
-        margin-top: 0;
-        font-size: 1.5em;
-      }
-
-      .modal-content ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      .modal-content li {
-        margin: 10px 0;
-        line-height: 1.4em;
-      }
-
-      .close {
-        color: var(--muted-color);
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      .close:hover {
-        color: var(--text-color);
-      }
-
-      /* Mode selection buttons styling */
-      #modeSelector {
-        margin-bottom: 10px;
-      }
-      .mode-button {
-        padding: 8px 16px;
-        margin-right: 5px;
-        border: none;
-        border-radius: 5px;
-        background-color: var(--ai-msg-bg);
-        color: var(--text-color);
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-      }
-      .mode-button:hover {
-        background-color: var(--accent-color);
-        transform: translateY(-2px);
-      }
-      .mode-button.active {
-        background-color: var(--accent-color);
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Loading bar -->
-    <div id="loadingBar"></div>
-    
-    <header>
-      <img src="https://i.pinimg.com/736x/d8/99/5d/d8995dedd69d6972e4ea144ba27db6f8.jpg" alt="Profile">
-      <div class="title-container">
-        <div class="title">BrainRot AI Chat</div>
-        <div class="tagline">Your Digital Confidant for Unleashing True Emotions</div>
+  <!-- Messages -->
+  <main id="chatbox" class="flex-1 overflow-y-auto px-4 py-6 space-y-4 bg-gradient-to-b from-transparent via-transparent to-zinc-50 dark:to-zinc-900">
+    {% for msg in chat_history %}
+      <div class="message {{ msg.sender }} max-w-prose">
+        {{ msg.text }}
       </div>
-      <button class="glossary-btn" id="openGlossary">Glossary</button>
-    </header>
+    {% endfor %}
+  </main>
 
-    <div class="chat-container" id="chatbox">
-      <!-- Existing chat history rendered server-side -->
-      {% for msg in chat_history %}
-        <div class="message {{ msg.sender }}">{{ msg.text }}</div>
-      {% endfor %}
-    </div>
-
-    <div class="form-container">
-      <!-- Mode selector buttons -->
-      <div id="modeSelector">
-        <button type="button" class="mode-button active" data-mode="nerd">Nerd Mode</button>
-        <button type="button" class="mode-button" data-mode="brainrot">Brainrot Mode</button>
-        <button type="button" class="mode-button" data-mode="maxbrainrot">Max BrainRot Mode</button>
+  <!-- Input & actions -->
+  <footer class="border-t border-zinc-200 dark:border-zinc-700 p-4">
+    <form id="chatForm" class="space-y-3">
+      <textarea id="promptInput" name="prompt" rows="3" placeholder="say something brilliant or broken…" class="w-full resize-none rounded-lg bg-zinc-100 dark:bg-zinc-800/60 p-3 focus:ring-2 focus:ring-accent2 focus:outline-none text-sm"></textarea>
+      <div class="flex items-center gap-3">
+        <button type="submit" class="flex-1 md:flex-none md:w-32 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent1 to-accent2 text-white text-sm font-semibold hover:brightness-110 transition">
+          Send
+        </button>
+        <form method="post" action="/clear">
+          <button type="submit" class="clear-button inline-flex items-center px-4 py-2 rounded-lg bg-zinc-400/30 hover:bg-zinc-400/50 text-sm">Clear</button>
+        </form>
       </div>
-      <form id="chatForm">
-        <textarea name="prompt" id="promptInput" placeholder="Share your thoughts..."></textarea>
-        <button type="submit">Send Message</button>
-      </form>
-      <form method="post" action="/clear">
-        <button type="submit" class="clear-button">Clear Chat</button>
-      </form>
-    </div>
-    
-    <!-- Expanded Debug panel -->
-    <div id="debugPanel">
-      Online: <span id="onlineCount">--</span><br>
-      Time: <span id="debugInfo">Initializing...</span><br>
-      CPU: <span id="cpuUsage">--</span>%<br>
-      RAM: <span id="ramUsage">--</span>%<br>
-      Disk: <span id="diskUsage">--</span>%<br>
-      Ping: <span id="ping">--</span> ms<br>
-      WiFi: <span id="wifi">--</span>
-    </div>
-    
-    <!-- Slang Glossary Modal -->
-    <div id="glossaryModal" class="modal">
-      <div class="modal-content">
-        <span class="close" id="closeGlossary">&times;</span>
-        <h2>Slang Glossary</h2>
-        <ul>
-          <li><strong>icl:</strong> i couldnt lie.</li>
-          <li><strong>pmo:</strong> piss me off.</li>
-          <li><strong>ts:</strong> this shit/ this.</li>
-          <li><strong>ngl:</strong> not gonna lie.</li>
-          <li><strong>rn:</strong> right now – in the moment.</li>
-          <li><strong>fr:</strong> for real – genuine emotions.</li>
-          <li><strong>b fr:</strong> be real.</li>
-          <li><strong>h8:</strong> hate.</li>
-          <li><strong>idek:</strong> i don't even know.</li>
-          <li><strong>anm:</strong> another moment.</li>
-          <li><strong>mn:</strong> man, this is tough.</li>
-          <li><strong>js:</strong> just saying it as it is.</li>
-          <li><strong>vro:</strong> very real ones only.</li>
-          <li><strong>sb:</strong> somebody, somewhere, cared.</li>
-          <li><strong>atp:</strong> at this point, it's over.</li>
-          <li><strong>oms:</strong> oh, my soul is shattered.</li>
-          <li><strong>sybau:</strong> see ya – i'm off.</li>
-          <li><strong>lol:</strong> laughing out loud in distress.</li>
-        </ul>
-      </div>
-    </div>
-    
-    <script>
-      // Glossary modal functionality
-      const glossaryModal = document.getElementById("glossaryModal");
-      const openGlossaryBtn = document.getElementById("openGlossary");
-      const closeGlossaryBtn = document.getElementById("closeGlossary");
+    </form>
+  </footer>
+</div>
 
-      openGlossaryBtn.onclick = () => {
-        glossaryModal.style.display = "block";
-      };
+<!-- Thin loading bar (unchanged ID) -->
+<div id="loadingBar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-accent1 to-accent2 w-0"></div>
 
-      closeGlossaryBtn.onclick = () => {
-        glossaryModal.style.display = "none";
-      };
+<!-- ——————————————————  GLOSSARY MODAL  —————————————————— -->
+<div id="glossaryModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur">
+  <div class="bg-white dark:bg-zinc-900 max-w-md w-11/12 rounded-xl p-6 overflow-y-auto max-h-[70vh]">
+    <button id="closeGlossary" class="float-right text-2xl leading-none">&times;</button>
+    <h2 class="text-lg font-bold mb-4 text-accent2">Slang Glossary</h2>
+    <ul class="space-y-2 text-sm">
+      <li><b>icl</b> – i can’t lie</li>
+      <li><b>pmo</b> – put me on</li>
+      <li><b>ngl</b> – not gonna lie</li>
+      <li><b>fr</b> – for real</li>
+      <li><b>rn</b> – right now</li>
+      <li><b>idek</b> – i don’t even know</li>
+      <li><b>atp</b> – at this point</li>
+      <li><b>oms</b> – on my soul</li>
+      <li><b>sybau</b> – see ya, bye</li>
+    </ul>
+  </div>
+</div>
 
-      window.onclick = (event) => {
-        if (event.target === glossaryModal) {
-          glossaryModal.style.display = "none";
-        }
-      };
+<!-- ——————————————————  JAVASCRIPT  —————————————————— -->
+<script>
+/* Dark‑mode */
+const html=document.documentElement,themeBtn=document.getElementById('themeToggle');
+function setTheme(t){html.classList.toggle('dark',t==='dark');html.classList.toggle('light',t==='light');}
+setTheme(localStorage.theme||'dark');
+themeBtn.onclick=()=>{const t=html.classList.contains('dark')?'light':'dark';localStorage.theme=t;setTheme(t);};
 
-      // Mode selection logic
-      let selectedMode = "nerd"; // Default mode
+/* Sidebar slide (mobile) */
+const sb=document.getElementById('sidebar'),sbToggle=document.getElementById('toggleSidebar');
+sbToggle.onclick=()=>sb.classList.toggle('-translate-x-full');
 
-      const modeButtons = document.querySelectorAll('.mode-button');
-      modeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          // Remove active class from all buttons and add to the clicked button
-          modeButtons.forEach(btn => btn.classList.remove('active'));
-          button.classList.add('active');
-          selectedMode = button.getAttribute('data-mode');
-        });
-      });
+/* Glossary modal */
+const gloss=document.getElementById('glossaryModal');
+[openGlossary,openGlossaryTop].forEach(btn=>btn.onclick=()=>gloss.classList.remove('hidden','opacity-0'));
+closeGlossary.onclick=()=>gloss.classList.add('hidden');
+window.onclick=e=>{if(e.target===gloss)gloss.classList.add('hidden');};
 
-      // Handle chat form submission with AJAX and live streaming update
-      const chatForm = document.getElementById('chatForm');
-      const promptInput = document.getElementById('promptInput');
-      const chatbox = document.getElementById('chatbox');
-      const loadingBar = document.getElementById('loadingBar');
+/* Persona selector */
+let selectedMode='nerd';
+document.querySelectorAll('.mode-button').forEach(b=>{
+  b.onclick=()=>{document.querySelectorAll('.mode-button').forEach(x=>x.classList.remove('active','bg-accent2','text-white'));
+    b.classList.add('active','bg-accent2','text-white');selectedMode=b.dataset.mode;}
+});
 
-      chatForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const promptText = promptInput.value.trim();
-        if (!promptText) return;
-        
-        // Add user message immediately to the chatbox
-        const userMsgDiv = document.createElement('div');
-        userMsgDiv.classList.add('message', 'user');
-        userMsgDiv.textContent = promptText;
-        chatbox.appendChild(userMsgDiv);
-        chatbox.scrollTop = chatbox.scrollHeight;
+/* Helper: add message bubble */
+function bubble(role,txt){const d=document.createElement('div');d.className=`message ${role} max-w-prose`;d.textContent=txt;chatbox.appendChild(d);chatbox.scrollTop=chatbox.scrollHeight;return d}
 
-        // Clear the textarea
-        promptInput.value = '';
+/* Typing indicator */
+function typing(){const d=bubble('ai','');d.innerHTML='<div class="flex gap-1"><span class="animate-bounce">.</span><span class="animate-bounce delay-150">.</span><span class="animate-bounce delay-300">.</span></div>';return d}
 
-        // Create an element for the AI response
-        const aiMsgDiv = document.createElement('div');
-        aiMsgDiv.classList.add('message', 'ai');
-        aiMsgDiv.textContent = '';
-        chatbox.appendChild(aiMsgDiv);
-        chatbox.scrollTop = chatbox.scrollHeight;
+/* Streaming logic (IDs unchanged) */
+chatForm.addEventListener('submit',e=>{
+  e.preventDefault();
+  const msg=promptInput.value.trim();if(!msg)return;
+  bubble('user',msg);promptInput.value='';const indicator=typing();
+  loadingBar.style.width='15%';
 
-        // Show the loading bar and animate it
-        loadingBar.style.width = "20%";
-        loadingBar.style.display = "block";
+  fetch('/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:msg,mode:selectedMode})})
+  .then(r=>{
+      const reader=r.body.getReader(),dec=new TextDecoder();let div=null,len=0;
+      (function read(){reader.read().then(({done,value})=>{
+        if(done){indicator.remove();loadingBar.style.width='100%';setTimeout(()=>loadingBar.style.width='0',200);return}
+        const chunk=dec.decode(value);if(!div){div=bubble('ai','');}
+        div.textContent+=chunk;chatbox.scrollTop=chatbox.scrollHeight;len+=value.length;loadingBar.style.width=15+len%80+'%';read();})
+      })();
+  }).catch(()=>{indicator.textContent='[error]';loadingBar.style.width='0';});
+});
 
-        // Post the prompt and selected mode to the /generate endpoint and process the streamed response
-        fetch('/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: promptText, mode: selectedMode })
-        }).then(response => {
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder();
-          let receivedLength = 0;
-          
-          function readStream() {
-            reader.read().then(({ done, value }) => {
-              if (done) {
-                loadingBar.style.width = "100%";
-                setTimeout(() => { 
-                  loadingBar.style.display = "none"; 
-                  loadingBar.style.width = "0%";
-                }, 500);
-                return;
-              }
-              const chunk = decoder.decode(value);
-              receivedLength += value.length;
-              aiMsgDiv.textContent += chunk;
-              chatbox.scrollTop = chatbox.scrollHeight;
-              
-              // Update loading bar width dynamically (optional)
-              let width = 20 + (receivedLength % 80);
-              loadingBar.style.width = width + "%";
-              
-              readStream();
-            });
-          }
-          readStream();
-        }).catch(err => {
-          console.error("Error streaming response:", err);
-          aiMsgDiv.textContent = "Error during generation.";
-          loadingBar.style.display = "none";
-        });
-      });
+/* Progress bar tied to scroll */
+chatbox.addEventListener('scroll',()=>{progress.style.width=(chatbox.scrollTop/(chatbox.scrollHeight-chatbox.clientHeight))*100+'%';});
 
-      // Debug panel updater: poll the /debug endpoint every 5 seconds
-      function updateDebugPanel() {
-        fetch('/debug')
-          .then(res => res.json())
-          .then(data => {
-            document.getElementById('onlineCount').textContent = data.users_online;
-            document.getElementById('debugInfo').textContent = data.debug_info;
-            document.getElementById('cpuUsage').textContent = data.cpu_usage;
-            document.getElementById('ramUsage').textContent = data.ram_usage;
-            document.getElementById('diskUsage').textContent = data.disk_usage;
-            document.getElementById('ping').textContent = data.ping;
-            document.getElementById('wifi').textContent = data.wifi;
-          })
-          .catch(err => console.error("Error fetching debug info:", err));
-      }
-      setInterval(updateDebugPanel, 5000);
-      updateDebugPanel();
-    </script>
-  </body>
+/* Live debug polling */
+function poll(){fetch('/debug').then(r=>r.json()).then(d=>{
+  cpuUsage.textContent=d.cpu_usage;ramUsage.textContent=d.ram_usage;diskUsage.textContent=d.disk_usage;
+  ping.textContent=d.ping;wifi.textContent=d.wifi;onlineCount.textContent=d.users_online;
+}).catch(console.error);}poll();setInterval(poll,5000);
+</script>
+</body>
 </html>
