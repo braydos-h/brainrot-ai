@@ -1,221 +1,221 @@
-=<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>IGOON.ORG‑AI | Home</title>
 
-<!-- ─── INLINE STYLES ─────────────────────────────────────────────────────── -->
+<!-- ─── CORE THEME ────────────────────────────────────────────────────────── -->
 <style>
-/* ========== CORE PALETTE & THEME ========== */
 :root{
-  --bg:#ffffff;--text:#111827;--accent1:#7c3aed;--accent2:#6366f1;
-  --card:#f7f7fb;--glass:rgba(255,255,255,0.65);
-  --shadow:0 8px 24px rgba(0,0,0,.12);
+  --accent1:#7c3aed;--accent2:#6366f1;              /* tweak here for whole site */
+  --bg:#fff;--text:#111;--card:#fafafa;--glass:rgba(255,255,255,.65);
+  --shadow:0 10px 28px rgba(0,0,0,.14);
 }
 .dark{
-  --bg:#0f0f15;--text:#e5e7eb;--accent1:#a78bfa;--accent2:#8b5cf6;
-  --card:#1b1b24;--glass:rgba(17,17,23,0.55);
-  --shadow:0 8px 24px rgba(0,0,0,.45);
+  --bg:#0e0e14;--text:#e6e6eb;--card:#1b1b24;--glass:rgba(16,16,22,.55);
+  --shadow:0 10px 28px rgba(0,0,0,.45);
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Roboto,sans-serif;scroll-behavior:smooth;overflow-x:hidden}
+.container{width:min(92%,1100px);margin-inline:auto}
+a{text-decoration:none;color:inherit}
 
-/* ========== GLOBAL RESET ========== */
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,system-ui,"Segoe UI",Roboto,sans-serif}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);overflow-x:hidden}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes mesh{0%{background-position:0 0,0 0,0 0}50%{background-position:100% 50%,50% 100%,0 100%}100%{background-position:0 0,0 0,0 0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-60px)}}
+@keyframes type{from{width:0}to{width:100%}}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
 
-/* helper classes */
-.container{width:min(90%,1100px);margin-inline:auto}
-
-/* ========== LOADER ========== */
-#loader{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:1000;transition:opacity .4s}
+/* ─── LOADER ─────────────────────────────────────────────────────────────── */
+#loader{position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);z-index:2000;transition:opacity .4s}
 #loader.hidden{opacity:0;pointer-events:none}
 .spinner{width:48px;height:48px;border:5px solid var(--accent2);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
 
-/* ========== BUBBLE PARTICLES ========== */
-#bubbles span{position:absolute;border-radius:50%;background:linear-gradient(145deg,var(--accent1),var(--accent2));opacity:.15;animation:float 12s infinite ease-in-out}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-60px)}}
+/* ─── GLOBAL FROSTED BACKDROP ────────────────────────────────────────────── */
+.backdrop{position:fixed;inset:0;pointer-events:none;background:
+  radial-gradient(at 0% 100%,var(--accent1)20%,transparent 60%),
+  radial-gradient(at 100% 0%,var(--accent2)20%,transparent 60%),
+  radial-gradient(at 50% 50%,#ff008c30 0%,transparent 60%);
+background-size:600% 600%;
+animation:mesh 35s ease-in-out infinite}
 
-/* ========== HEADER / NAV ========== */
-header{position:sticky;top:0;z-index:200;background:var(--glass);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;box-shadow:var(--shadow)}
-nav a{margin-left:1.35rem;font-weight:500;transition:opacity .2s}
+/* ─── HEADER & PROGRESS BAR ─────────────────────────────────────────────── */
+header{position:sticky;top:0;z-index:1500;display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:var(--glass);backdrop-filter:blur(18px);box-shadow:var(--shadow)}
+nav a{margin-left:1.3rem;font-weight:500;transition:opacity .25s}
 nav a:hover{opacity:.7}
-.toggle{cursor:pointer;font-size:1.25rem;margin-left:1.35rem}
+.toggle{margin-left:1.3rem;cursor:pointer}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent1),var(--accent2));width:0%;z-index:1600}
 
-/* ========== HERO ========== */
-#hero{position:relative;padding:6rem 1rem 8rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2.2rem;overflow:hidden}
-#title{font-size:clamp(2.5rem,7vw,5rem);font-weight:800;line-height:1.1;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent;opacity:0;transform:translateY(40px);transition:all .8s ease}
-#hero.glass{background:var(--glass);border-radius:24px;padding:4rem 1rem;box-shadow:var(--shadow);backdrop-filter:blur(14px)}
-#startBtn{padding:1.1rem 2.3rem;border:none;border-radius:9999px;font-size:1.15rem;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:0 6px 18px rgba(0,0,0,.25);transition:transform .15s}
+/* ─── HERO ──────────────────────────────────────────────────────────────── */
+section{scroll-snap-align:start}         /* enable snap */
+#hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:2rem;position:relative}
+#hero h1{font-size:clamp(2.5rem,8vw,5rem);font-weight:800;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent}
+#hero .subtitle{font-size:1.2rem;overflow:hidden;border-right:3px solid var(--accent2);white-space:nowrap;width:0;animation:type 5s steps(40,end) infinite alternate}
+#startBtn{padding:1.1rem 2.5rem;border:none;border-radius:9999px;color:#fff;font-size:1.15rem;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--accent1),var(--accent2));box-shadow:var(--shadow);transition:transform .2s}
 #startBtn:hover{transform:translateY(-3px)}
-.wave{display:block;height:70px;width:100%;background:url('data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNDQwIDc1Ij48cGF0aCBkPSJNMCwwIEM0ODAsNzUsOTYwLDAsMTQ0MCw3NSBMMTQ0MCw3NSBMMSw3NSBaIiAvPjwvc3ZnPg==') no-repeat center/cover;transform:translateY(1px)}
+
+/* Parallax blobs */
+.blob{position:absolute;border-radius:50%;filter:blur(50px);opacity:.55;pointer-events:none;animation:float 18s ease-in-out infinite;mix-blend-mode:overlay}
+.blob.a{width:280px;height:280px;background:var(--accent1);top:10%;left:-6%;animation-duration:20s}
+.blob.b{width:240px;height:240px;background:var(--accent2);bottom:8%;right:-5%;animation-duration:22s}
+
+/* ─── SECTIONS GENERAL ──────────────────────────────────────────────────── */
+section.pad{padding:5rem 0}.wave{display:block;height:80px;width:100%;background:url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTQ0MCcgaGVpZ2h0PSc3NScgdmlld0JveD0nMCAwIDE0NDAgNzUnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHBhdGggZD0nTSAwIDAgQyA0ODAgNzUgOTYwIDAgMTQ0MCA3NSBMIDE0NDAgNzUgTCAwIDc1IFonIGZpbGw9J3doaXRlJy8+PC9zdmc+') no-repeat center/cover;transform:translateY(1px)}
 .wave.flip{transform:scaleY(-1) translateY(-1px)}
 
-/* ========== FEATURES GRID ========== */
-#features{padding:4rem 0}
-.grid{display:grid;gap:2rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.feat{background:var(--card);padding:2rem;border-radius:1.5rem;box-shadow:var(--shadow);text-align:center;transition:transform .25s}
+/* ─── FEATURE GRID ─────────────────────────────────────────────────────── */
+.grid{display:grid;gap:2rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.feat{background:var(--card);padding:2rem;border-radius:1.5rem;box-shadow:var(--shadow);text-align:center;transition:transform .3s}
 .feat:hover{transform:translateY(-6px)}
-.feat i{font-size:2.2rem;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent}
-.feat h3{margin:.9rem 0;font-size:1.25rem}
+.feat i{display:inline-block;font-size:2.4rem;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent;margin-bottom:.6rem}
+.feat h3{margin:.4rem 0}.feat p{font-size:.95rem;opacity:.8}
 
-/* ========== PERSONAS ========== */
-#personas{padding:4rem 0}
+/* ─── PERSONA CARDS (3‑D tilt) ─────────────────────────────────────────── */
 .cards{display:grid;gap:2rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.card{background:var(--card);border-radius:1.5rem;padding:2rem;box-shadow:var(--shadow);transition:transform .25s}
-.card:hover{transform:translateY(-6px)}
-.chips{display:flex;gap:.5rem;margin-bottom:1rem}
-.chip{flex:1;padding:.4rem .7rem;border-radius:9999px;font-size:.85rem;font-weight:600;text-align:center;cursor:pointer;background:var(--card);box-shadow:var(--shadow);transition:background .25s}
-.chip.active{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff}
-.card code{display:block;background:rgba(0,0,0,.05);padding:.9rem;border-radius:.9rem;font-size:.9rem;white-space:pre-wrap;min-height:72px}
+.card{background:var(--card);padding:2rem;border-radius:1.5rem;box-shadow:var(--shadow);transition:transform .25s}
+.card:hover{transform:translateY(-4px)}
+.card-inner{perspective:800px}
+.card-tilt{transition:transform .15s}
+.card code{display:block;background:rgba(0,0,0,.06);padding:1rem;border-radius:1rem;font-size:.9rem;white-space:pre-wrap;min-height:80px}
 
-/* ========== HOW IT WORKS / STEPS ========== */
-#how{padding:4rem 0}
-.step{display:flex;gap:1.2rem;align-items:flex-start;margin-bottom:1.7rem;opacity:0;transform:translateY(40px);transition:all .7s}
-.step div:first-child{font-size:1.4rem;font-weight:700;background:linear-gradient(145deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent}
+/* ─── ROCKET BACK‑TO‑TOP ──────────────────────────────────────────────── */
+#rocket{position:fixed;bottom:30px;right:30px;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:1.4rem;background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;cursor:pointer;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s}
+#rocket.show{opacity:1;pointer-events:auto}
+#rocket:hover{transform:translateY(-4px)}
 
-/* ========== GITHUB CTA ========== */
-#cta{padding:4rem 0;text-align:center}
-.ghcard{display:inline-block;padding:3rem 3.5rem;background:var(--card);border-radius:1.75rem;box-shadow:var(--shadow);max-width:500px}
-.ghcard h2{font-size:1.6rem;margin-bottom:1rem}
-.gh-btn{margin-top:1.4rem;padding:.9rem 2rem;border:none;border-radius:9999px;font-weight:700;font-size:1rem;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--accent1),var(--accent2));transition:transform .2s}
-.gh-btn:hover{transform:translateY(-4px)}
+/* ─── CURSOR RIPPLE ───────────────────────────────────────────────────── */
+.ripple{position:fixed;border-radius:50%;background:currentColor;pointer-events:none;width:20px;height:20px;transform:translate(-50%,-50%);animation:ripple .6s ease-out}
 
-/* ========== DEBUG PANEL, GLOSSARY, FOOTER ========== */
-/* (kept identical to your current v1 – omitted here for brevity) */
-
-/* ========== SCROLL‑REVEAL ========== */
-.reveal{opacity:0;transform:translateY(40px);transition:all .7s}
-.reveal.on{opacity:1;transform:none}
-
-/* ========== MEDIA ========== */
-@media (max-width:640px){header{padding:1rem}nav a{margin-left:1rem}}
-@keyframes floatFade{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-50px);opacity:.12}}
+/* ─── SCROLL‑SNAP CONTAINER ───────────────────────────────────────────── */
+html,body{scroll-snap-type:y proximity}
+@media(max-width:640px){header{padding:1rem}nav a{margin-left:1rem}}
 </style>
 </head>
 
 <body>
-<!-- ─── LOADER ───────────────────────────────────────────────────────────── -->
 <div id="loader"><div class="spinner"></div></div>
+<div class="backdrop"></div>
+<div id="progress"></div>
 
-<!-- ─── HEADER ───────────────────────────────────────────────────────────── -->
+<!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
 <header>
   <strong>IGOON.ORG‑AI</strong>
   <nav>
     <a href="#features">Features</a>
     <a href="#personas">Personas</a>
-    <a href="#how">How&nbsp;It&nbsp;Works</a>
-    <span class="toggle" id="darkToggle">🌓</span>
+    <a href="#how">Docs</a>
+    <span id="darkToggle" class="toggle">🌓</span>
   </nav>
 </header>
 
-<!-- ─── HERO ─────────────────────────────────────────────────────────────── -->
-<section id="hero" class="glass">
-  <div id="bubbles"></div> <!-- particle container -->
-  <h1 id="title">IGOON.ORG‑AI</h1>
-  <p class="reveal">Chat in whatever flavor of chaos or clarity you crave.</p>
-  <button id="startBtn" onclick="location.href='chat.html'">Start&nbsp;Chatting</button>
+<!-- ─── HERO ───────────────────────────────────────────────────────────── -->
+<section id="hero">
+  <span class="blob a"></span><span class="blob b"></span>
+  <h1>IGOON.ORG‑AI</h1>
+  <div class="subtitle">chat. goon. vibe.</div>
+  <button id="startBtn" onclick="location.href='chat.html'">Start Chatting</button>
 </section>
 <span class="wave flip"></span>
 
-<!-- ─── FEATURES GRID ────────────────────────────────────────────────────── -->
-<section id="features" class="container">
+<!-- ─── FEATURES ───────────────────────────────────────────────────────── -->
+<section id="features" class="container pad">
   <div class="grid">
-    <div class="feat reveal"><i>⚡️</i><h3>Real‑Time Streams</h3><p>Watch tokens pour out live – zero latent vibes.</p></div>
-    <div class="feat reveal"><i>🧠</i><h3>3 Personas</h3><p>Nerd, Brainrot, or Max Brainrot – pick your poison.</p></div>
-    <div class="feat reveal"><i>🔒</i><h3>Off‑Cloud Privacy</h3><p>Runs on your box via Ollama – no third‑party snooping.</p></div>
-    <div class="feat reveal"><i>📊</i><h3>Live Debug</h3><p>CPU, RAM, ping, Wi‑Fi – all at a glance.</p></div>
+    <div class="feat"><i>⚡️</i><h3>Real‑time Streams</h3><p>See every token the instant it’s born.</p></div>
+    <div class="feat"><i>🧠</i><h3>Three Personas</h3><p>Nerd precision to nihilistic rot at a click.</p></div>
+    <div class="feat"><i>🔒</i><h3>Local Privacy</h3><p>Everything runs on your box via Ollama.</p></div>
+    <div class="feat"><i>📊</i><h3>Live Debug</h3><p>CPU, RAM, ping, Wi‑Fi – all visible.</p></div>
   </div>
 </section>
 <span class="wave"></span>
 
-<!-- ─── PERSONA DEMO ─────────────────────────────────────────────────────── -->
-<section id="personas" class="container">
-  <h2 class="reveal" style="text-align:center;font-size:2rem;margin-bottom:2rem;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent">Persona Preview</h2>
-  <div class="chips">
-    <div class="chip active" data-persona="nerd">Nerd</div>
-    <div class="chip" data-persona="brainrot">Brainrot</div>
-    <div class="chip" data-persona="max">Max Brainrot</div>
-  </div>
+<!-- ─── PERSONAS ───────────────────────────────────────────────────────── -->
+<section id="personas" class="container pad">
+  <h2 style="text-align:center;font-size:2rem;margin-bottom:2.5rem;
+     background:linear-gradient(90deg,var(--accent1),var(--accent2));
+     -webkit-background-clip:text;color:transparent">Persona Preview</h2>
   <div class="cards">
-    <div class="card reveal"><h3>Nerd&nbsp;Mode 🧠</h3><code id="nerdSample">&gt; uptime?\n= “Server online 3 d 4 h.”</code></div>
-    <div class="card reveal"><h3>Brainrot&nbsp;Mode 🌀</h3><code id="brainSample">&gt; uptime?\nbro idek 😭 been on like 3d 4h icl 🤙</code></div>
-    <div class="card reveal"><h3>Max Brainrot 💀</h3><code id="maxSample">&gt; uptime?\ntime void 🤡🕳️ 3 suns dead since boot lmao</code></div>
+    <div class="card card-inner">
+      <div class="card-tilt">
+        <h3>Nerd Mode 🧠</h3>
+        <code>&gt; uptime?\n= “Server online 3 d 4 h.”</code>
+      </div>
+    </div>
+    <div class="card card-inner">
+      <div class="card-tilt">
+        <h3>Brainrot Mode 🌀</h3>
+        <code>&gt; uptime?\nbro idek 😭 been on like 3d 4h icl 🤙</code>
+      </div>
+    </div>
+    <div class="card card-inner">
+      <div class="card-tilt">
+        <h3>Max Brainrot 💀</h3>
+        <code>&gt; uptime?\ntime void 🤡🕳️ 3 suns dead since boot lmao</code>
+      </div>
+    </div>
   </div>
 </section>
 <span class="wave flip"></span>
 
-<!-- ─── HOW IT WORKS ─────────────────────────────────────────────────────── -->
-<section id="how" class="container">
-  <h2 class="reveal" style="text-align:center;font-size:2rem;margin-bottom:2rem;background:linear-gradient(90deg,var(--accent1),var(--accent2));-webkit-background-clip:text;color:transparent">Under the Hood</h2>
-  <div class="step reveal"><div>1.</div><p>We fuse your prompt with persona rules.</p></div>
-  <div class="step reveal"><div>2.</div><p>Send to local <b>qwen&nbsp;2.5 · 1.5 b</b> via Ollama.</p></div>
-  <div class="step reveal"><div>3.</div><p>Stream chunks back to the browser with <code>ReadableStream</code>.</p></div>
-  <div class="step reveal"><div>4.</div><p>Debug endpoint polls stats every 5 s for live health.</p></div>
-  <div class="step reveal"><div>5.</div><p>Dark‑mode &amp; localStorage remember your vibe.</p></div>
-</section>
-
-<!-- ─── GITHUB CTA ───────────────────────────────────────────────────────── -->
-<section id="cta">
-  <div class="ghcard reveal">
-    <h2>Love it?</h2>
-    <p>Drop us a star on GitHub &nbsp;→ <br><small>and hack away at the code.</small></p>
-    <button class="gh-btn" onclick="window.open('https://github.com/your‑github‑handle/IGOON.ORG-AI','_blank')">Star&nbsp;Us ⭐</button>
+<!-- ─── HOW IT WORKS ──────────────────────────────────────────────────── -->
+<section id="how" class="container pad">
+  <h2 style="text-align:center;font-size:2rem;margin-bottom:2.5rem;
+     background:linear-gradient(90deg,var(--accent1),var(--accent2));
+     -webkit-background-clip:text;color:transparent">Under the Hood</h2>
+  <div class="grid">
+    <div class="feat"><i>🛠️</i><h3>Persona Fusion</h3><p>Your text + persona prompt = magic.</p></div>
+    <div class="feat"><i>🚀</i><h3>Qwen 2.5 `1.5 b`</h3><p>Served through Ollama with zero cloud.</p></div>
+    <div class="feat"><i>🌊</i><h3>Chunk Streaming</h3><p>ReadableStream feeds tokens as they land.</p></div>
+    <div class="feat"><i>🖥️</i><h3>Stats Endpoint</h3><p>JSON `/stats` polled every 5 s.</p></div>
   </div>
 </section>
 
-<!-- ─── FOOTER, DEBUG PANEL, GLOSSARY (unchanged for brevity) ────────────── -->
-<!-- … keep your existing footer / debug / glossary markup & scripts … -->
+<!-- ─── BACK TO TOP ROCKET ─────────────────────────────────────────────── -->
+<div id="rocket" title="Back to top">🚀</div>
 
-<!-- ─── INLINE SCRIPTS ───────────────────────────────────────────────────── -->
+<!-- ─── INLINE SCRIPTS ─────────────────────────────────────────────────── -->
 <script>
-/* ========== LOADER ========== */
-window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('hidden'),300));
+/* loader fade */
+window.addEventListener('load',()=>setTimeout(()=>loader.classList.add('hidden'),300));
 
-/* ========== DARK MODE ========== */
+/* dark‑mode toggle */
 const root=document.documentElement,darkT=document.getElementById('darkToggle');
 const setTheme=m=>m==='dark'?root.classList.add('dark'):root.classList.remove('dark');
 setTheme(localStorage.theme||'light');
 darkT.onclick=()=>{const m=root.classList.toggle('dark')?'dark':'light';localStorage.theme=m};
 
-/* ========== HERO ENTRY & BUBBLES ========== */
-const hero=document.getElementById('hero');const titleEl=document.getElementById('title');
-setTimeout(()=>titleEl.style.cssText='opacity:1;transform:none',400);
-const bubbles=document.getElementById('bubbles');
-for(let i=0;i<25;i++){
-  const s=document.createElement('span');
-  const size=Math.random()*60+20;
-  s.style.width=s.style.height=size+'px';
-  s.style.left=Math.random()*100+'%';
-  s.style.bottom='-'+(size*2)+'px';
-  s.style.animationDuration=8+Math.random()*8+'s';
-  s.style.animationDelay=Math.random()*4+'s';
-  bubbles.appendChild(s);
-}
+/* scroll progress bar & rocket */
+const progress=document.getElementById('progress'),rocket=document.getElementById('rocket');
+window.addEventListener('scroll',()=>{
+  const h=document.documentElement,w=(scrollY/(h.scrollHeight-h.clientHeight))*100;
+  progress.style.width=w+'%';
+  if(scrollY>600)rocket.classList.add('show');else rocket.classList.remove('show');
+});
+rocket.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});
 
-/* ========== SCROLL‑REVEAL ========== */
-const reveals=[...document.querySelectorAll('.reveal'),...document.querySelectorAll('.step')];
-const io=new IntersectionObserver(e=>{
-  e.forEach(o=>{if(o.isIntersecting){o.target.classList.add('on');io.unobserve(o.target)}})
-},{threshold:.2});
-reveals.forEach(r=>io.observe(r));
+/* typewriter subtitle loop */
+const phrases=["chat. goon. vibe.","precise ✦ chaotic ✦ rot.","local LLM, global energy."];
+let idx=0,sub=document.querySelector('.subtitle');
+setInterval(()=>{idx=(idx+1)%phrases.length;sub.style.animation='none';void sub.offsetWidth;sub.textContent=phrases[idx];sub.style.animation='type 5s steps(40,end) infinite alternate'},6000);
 
-/* ========== PERSONA DEMO TOGGLE ========== */
-const chips=document.querySelectorAll('.chip');
-const samples={nerd:"&gt; uptime?\\n= “Server online 3 d 4 h.”",
- brainrot:"&gt; uptime?\\nbro idek 😭 been on like 3d 4h icl 🤙",
- max:"&gt; uptime?\\ntime void 🤡🕳️ 3 suns dead since boot lmao"};
-chips.forEach(c=>{
-  c.onclick=()=>{chips.forEach(x=>x.classList.remove('active'));c.classList.add('active');
-    const p=c.dataset.persona;document.getElementById('nerdSample').textContent=samples[p==='nerd'?'nerd':'nerd'];
-    document.getElementById('brainSample').textContent=samples[p==='brainrot'?'brainrot':'brainrot'];
-    document.getElementById('maxSample').textContent=samples[p==='max'?'max':'max'];
-  };
+/* cursor ripple */
+window.addEventListener('click',e=>{
+  const r=document.createElement('span');r.className='ripple';r.style.left=e.clientX+'px';r.style.top=e.clientY+'px';document.body.appendChild(r);
+  r.style.color=getComputedStyle(root).getPropertyValue('--accent2');r.addEventListener('animationend',()=>r.remove());
 });
 
-/* ========== YOUR EXISTING DEBUG / GLOSSARY JS HERE ========== */
-// … (unchanged) …
+/* tilt cards */
+document.querySelectorAll('.card-inner').forEach(card=>{
+  const tilt=card.querySelector('.card-tilt');
+  card.addEventListener('mousemove',e=>{
+    const rect=card.getBoundingClientRect(),x=e.clientX-rect.left,y=e.clientY-rect.top;
+    const rx=-(y-rect.height/2)/20,ry=(x-rect.width/2)/20;
+    tilt.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`});
+  card.addEventListener('mouseleave',()=>tilt.style.transform='rotateX(0) rotateY(0)');
+});
+
+/* loader / query shortcuts */
+const loader=document.getElementById('loader');
 </script>
 </body>
 </html>
