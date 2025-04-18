@@ -1,275 +1,367 @@
+<!-- =====================================================
+     IGOON.ORG‑AI : Single‑file Landing Page (index.html)
+     ---------------------------------------------------
+     ▸ Engaging intro page for the Flask web‑app that
+       connects to a local Ollama LLM backend.
+     ▸ All CSS + JS are embedded inline for ultra‑simple
+       deployment (drop‑in to /templates or web‑root).
+     ▸ Each major block is exhaustively commented so future
+       devs instantly grok the what & why.
+===================================================== -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Ensures responsive behavior on mobile devices -->
+  <!-- Ensures proper rendering & touch‑zoom across devices -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>igoon.org | Home</title>
-  <!-- Google Font for a modern, clean look -->
-  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet" />
+  <title>IGOON.ORG‑AI | Home</title>
+
+  <!-- =====================================================
+       Inline CSS — Styles, layout, animations, dark‑mode
+  ===================================================== -->
   <style>
-    /* CSS Variables (from boot.html) */
+    /* -----------------------------------------------------
+       1. CSS Custom Properties (aka variables)
+          – Keeps color palette & rhythm consistent.
+    ----------------------------------------------------- */
     :root {
-      --primary-color: #000;
-      --hover-primary: #333;
-      --bg-color: #fff;
-      --text-color: #000;
+      /* Light scheme */
+      --bg: #ffffff;
+      --text: #0f172a;           /* slate‑900 */
+      --accent: #2563eb;         /* blue‑600 */
+      --accent-hover: #1e40af;   /* blue‑800 */
+      --card: #f1f5f9;           /* slate‑100 */
+      --shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
     }
-    /* Dark Mode variables */
-    .dark-mode {
-      --primary-color: #fff;
-      --hover-primary: #ccc;
-      --bg-color: #121212;
-      --text-color: #fff;
+    /* When <body> has .dark the variables below override */
+    body.dark {
+      --bg: #0f172a;             /* slate‑900 */
+      --text: #f8fafc;           /* slate‑50 */
+      --accent: #3b82f6;         /* blue‑500 */
+      --accent-hover: #60a5fa;   /* blue‑400 */
+      --card: #1e293b;           /* slate‑800 */
+      --shadow: 0 6px 18px rgba(0, 0, 0, 0.65);
     }
-    /* Global Reset */
+
+    /* -----------------------------------------------------
+       2. Global Reset & Typography
+    ----------------------------------------------------- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    /* Body styling (from boot.html) */
+    html {
+      scroll-behavior: smooth;   /* enables CSS—native smooth scroll */
+    }
     body {
-      font-family: 'Lato', sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s ease, color 0.3s ease;
+      overflow-x: hidden;        /* avoids accidental horizontal scroll */
+    }
+    /* Utility helpers */
+    .container {
+      width: 90%;
+      max-width: 1120px;
+      margin: 0 auto;            /* centers children */
+      padding: 4rem 0;
+    }
+
+    /* -----------------------------------------------------
+       3. Loader overlay that disappears once DOM ready
+    ----------------------------------------------------- */
+    #loader {
+      position: fixed;
+      inset: 0;                  /* top/right/bottom/left:0 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      z-index: 9999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    /* spins with dashes to look modern */
+    #loader .spinner {
+      width: 64px;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      border: 6px solid var(--accent);
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* When JS adds .hidden the overlay fades → invisible */
+    #loader.hidden { opacity: 0; visibility: hidden; }
+
+    /* -----------------------------------------------------
+       4. Navbar — minimalist brand & dark‑mode toggle
+    ----------------------------------------------------- */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 5%;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--bg);
+      box-shadow: var(--shadow);
+      z-index: 1000;
+    }
+    nav .logo {
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      font-size: 1.1rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+    /* Dark‑mode toggle icon‑button */
+    #modeToggle {
+      background: none;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      font-size: 1rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #modeToggle:hover { background: var(--accent); color: #fff; }
+
+    /* -----------------------------------------------------
+       5. Hero section — animated title + CTA button
+    ----------------------------------------------------- */
+    header.hero {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      text-align: center;
       min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-      transition: background 0.3s, color 0.3s;
+      padding-top: 4.5rem;       /* offset fixed nav */
     }
-    /* Loader Styles (from boot.html) */
-    #loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-color);
+    /* Title container — we spawn <span> letters inside via JS */
+    #title {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      margin-bottom: 2.5rem;
+      user-select: none;         /* prevents text selection during animation */
+    }
+    /* Each individual character will fade‑in */
+    #title span {
+      opacity: 0;
+      display: inline-block;
+      animation: fadeIn 0.7s forwards;
+    }
+    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+    /* CTA button linking to chat.html */
+    .cta {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.9rem 2.2rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      transition: background 0.25s ease;
+    }
+    .cta:hover { background: var(--accent-hover); }
+
+    /* -----------------------------------------------------
+       6. Persona Preview Section
+    ----------------------------------------------------- */
+    #personas {
+      display: grid;
+      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    .persona {
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 1.25rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease;
+    }
+    .persona:hover { transform: translateY(-6px); }
+    .persona h3 {
+      margin-bottom: 0.75rem;
+      font-size: 1.25rem;
+    }
+    .persona p { font-size: 0.95rem; opacity: 0.85; }
+    /* Individual persona accent borders */
+    .nerd { border-inline-start: 6px solid #22c55e; }       /* green */
+    .brainrot { border-inline-start: 6px solid #f59e0b; }   /* amber */
+    .maxbrainrot { border-inline-start: 6px solid #ef4444; }/* red  */
+
+    /* -----------------------------------------------------
+       7. Footer w/ social + GitHub icon links
+    ----------------------------------------------------- */
+    footer {
+      text-align: center;
+      padding: 3rem 0 1.5rem;
+      background: var(--card);
+    }
+    .social {
+      list-style: none;
       display: flex;
       justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .social a {
+      display: flex;
       align-items: center;
-      z-index: 9999;
-    }
-    #loader.fade-out {
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-    .spinner {
-      border: 8px solid #f3f3f3;
-      border-top: 8px solid var(--primary-color);
+      justify-content: center;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      animation: spin 1s linear infinite;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      transition: background 0.3s;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    /* Header styling (from boot.html) */
-    header {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      padding: 20px 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--bg-color);
-      border-bottom: 1px solid #ddd;
-    }
-    header .logo {
-      font-size: 1.75rem;
-      font-weight: 700;
-    }
-    header nav {
-      display: flex;
-      gap: 20px;
-    }
-    header nav a {
-      text-decoration: none;
-      color: var(--text-color);
-      font-weight: 500;
-      text-transform: uppercase;
-      transition: color 0.3s, transform 0.2s;
-    }
-    header nav a:hover {
-      color: var(--hover-primary);
-      transform: translateY(-2px);
-    }
-    /* Dark mode toggle button styling */
-    #theme-toggle {
-      background: none;
-      border: 1px solid var(--primary-color);
-      color: var(--text-color);
-      padding: 5px 10px;
-      cursor: pointer;
-      border-radius: 5px;
-      transition: background-color 0.3s, color 0.3s, transform 0.2s;
-    }
-    #theme-toggle:hover {
-      background-color: var(--hover-primary);
-      color: var(--bg-color);
-      transform: scale(1.05);
-    }
-    /* Boot Animation styling (merged from both files – using boot.html’s version for header spacing) */
-    .boot-animation {
-      font-size: 4rem;
-      font-weight: 300;
-      letter-spacing: 0.05em;
-      margin-top: 100px; /* Leave space for the header */
-      transition: opacity 0.5s ease-in-out;
-    }
-    @keyframes fadeInScale {
-      0% {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-    .letter {
-      display: inline-block;
-      opacity: 0;
-    }
-    .fade-in {
-      animation: fadeInScale 0.5s forwards;
-    }
-    /* Extra content styling (from boot.html) */
-    .extra-content {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 1.1rem;
-      max-width: 600px;
-      line-height: 1.6;
-      padding: 0 20px;
-    }
-    .button {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 30px;
-      background-color: var(--primary-color);
-      color: var(--bg-color);
-      border: none;
-      border-radius: 30px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.3s;
-      text-decoration: none;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .button:hover {
-      background-color: var(--hover-primary);
-      transform: translateY(-2px);
-    }
-    .button:active {
-      transform: translateY(0);
-    }
-    /* Footer styling (from boot.html) */
-    footer {
-      position: absolute;
-      bottom: 20px;
-      font-size: 0.9rem;
-      color: #777;
-    }
-    /* Responsive adjustments (from boot.html) */
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        gap: 10px;
-      }
-      .boot-animation {
-        font-size: 2.5rem;
-        margin-top: 80px;
-      }
-      .extra-content {
-        font-size: 1rem;
-      }
+    .social a:hover { background: var(--accent); color: #fff; }
+    footer small { font-size: 0.8rem; opacity: 0.7; }
+
+    /* -----------------------------------------------------
+       8. Responsive tweaks (medium & below)
+    ----------------------------------------------------- */
+    @media (max-width: 640px) {
+      nav .logo { font-size: 0.9rem; }
+      #modeToggle { font-size: 0.9rem; }
+      .cta { width: 100%; }
     }
   </style>
 </head>
 <body>
-  <!-- Loader for improved user feedback -->
+  <!-- ===================================================
+       Loader Overlay — hidden after window load event
+  =================================================== -->
   <div id="loader">
-    <div class="spinner"></div>
+    <div class="spinner" aria-label="Loading"></div>
   </div>
-  
-  <!-- Header Section with Navigation and Dark Mode Toggle -->
-  <header>
-    <div class="logo">igoon.org</div>
-    <nav>
-      <a href="#home">Home</a>
-      <a href="howitworks">How It Works</a>
-      <a href="chat">Chat</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <button id="theme-toggle">Toggle Dark Mode</button>
+
+  <!-- ===================================================
+       Sticky NavBar — brand + dark‑mode toggle
+  =================================================== -->
+  <nav>
+    <a href="#home" class="logo">IGOON.ORG‑AI</a>
+    <button id="modeToggle" aria-label="Toggle dark mode">🌙</button>
+  </nav>
+
+  <!-- ===================================================
+       Hero / Intro section
+  =================================================== -->
+  <header id="home" class="hero container">
+    <!-- Animated title — letters injected via JS -->
+    <h1 id="title" aria-label="IGOON.ORG‑AI"></h1>
+    <!-- Call‑To‑Action button leading to chat.html -->
+    <a href="chat.html" class="cta">Start Chatting</a>
   </header>
-  
-  <!-- Boot Animation Container -->
-  <div id="animation-container" class="boot-animation"></div>
-  
-  <!-- Extra Content with Call to Action and Open Source Announcement -->
-  <div class="extra-content">
-    Welcome to igoon.org – where technology meets brainrot chaos for a truly unique digital experience.
-    <br /><br />
-    <h2>We are going open source!</h2>
-    <br />
-    <a href="chat" class="button">Chat Now</a>
-  </div>
-  
-  <!-- Footer -->
+
+  <!-- ===================================================
+       Persona preview cards
+  =================================================== -->
+  <section id="personas" class="container">
+    <article class="persona nerd">
+      <h3>Nerd Mode</h3>
+      <p>"Greetings. The derivative of x² is 2x."</p>
+    </article>
+    <article class="persona brainrot">
+      <h3>Brainrot Mode</h3>
+      <p>"bro idek 🚀 math be wild fr 😂"</p>
+    </article>
+    <article class="persona maxbrainrot">
+      <h3>Max Brainrot</h3>
+      <p>"ayy brain go brrrr 🫠 words? no moar"</p>
+    </article>
+  </section>
+
+  <!-- ===================================================
+       Footer with social links (GitHub + X/Twitter)
+  =================================================== -->
   <footer>
-    &copy; 2025 igoon.org. All rights reserved.
+    <ul class="social">
+      <li>
+        <a href="https://github.com/braydos-h/IGOON.ORG-AI" target="_blank" aria-label="GitHub">
+          <!-- Octocat SVG icon (stroke follows currentColor) -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.166 6.84 9.49.5.09.68-.217.68-.483 0-.237-.01-1.022-.015-1.852-2.782.604-3.37-1.342-3.37-1.342-.455-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.607.069-.607 1.003.07 1.531 1.032 1.531 1.032.893 1.53 2.341 1.088 2.91.832.09-.647.35-1.088.636-1.338-2.22-.253-4.555-1.112-4.555-4.945 0-1.092.39-1.986 1.03-2.687-.104-.253-.447-1.272.098-2.65 0 0 .84-.268 2.75 1.026A9.564 9.564 0 0 1 12 6.845c.85.004 1.705.115 2.503.337 1.91-1.294 2.748-1.026 2.748-1.026.546 1.378.203 2.397.1 2.65.64.701 1.028 1.595 1.028 2.687 0 3.842-2.338 4.688-4.566 4.936.36.31.68.919.68 1.852 0 1.335-.013 2.41-.013 2.736 0 .27.18.58.688.482A10.002 10.002 0 0 0 22 12c0-5.52-4.48-10-10-10z"/>
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a href="https://twitter.com/your_handle" target="_blank" aria-label="Twitter / X">
+          <!-- X icon SVG -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 3h3L6 21H3l15-18z" />
+            <path d="M21 21h-3L3 3h3l15 18z" />
+          </svg>
+        </a>
+      </li>
+    </ul>
+    <small>&copy; 2025 IGOON.ORG‑AI. All rights reserved.</small>
   </footer>
-  
-  <!-- JavaScript for Animations, Loader Fade, and Dark Mode Toggle -->
+
+  <!-- =====================================================
+       Inline JavaScript — loader, dark‑mode, animations
+  ===================================================== -->
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Dark Mode Toggle functionality
-      const themeToggle = document.getElementById("theme-toggle");
-      themeToggle.addEventListener("click", function() {
-        document.body.classList.toggle("dark-mode");
+    // ----------------------------------------------------
+    // 1. Loader fade‑out once window fully loaded
+    // ----------------------------------------------------
+    window.addEventListener('load', () => {
+      document.getElementById('loader').classList.add('hidden');
+    });
+
+    // ----------------------------------------------------
+    // 2. Dark‑mode toggle w/ persistence via localStorage
+    // ----------------------------------------------------
+    const body = document.body;
+    const toggleBtn = document.getElementById('modeToggle');
+    // Apply stored preference ("true" or "false")
+    if (localStorage.getItem('igoon-dark') === 'true') {
+      body.classList.add('dark');
+    }
+    // Toggle on click
+    toggleBtn.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      const isDark = body.classList.contains('dark');
+      localStorage.setItem('igoon-dark', isDark);
+      // Swap icon graphic for UX clarity
+      toggleBtn.textContent = isDark ? '☀️' : '🌙';
+    });
+
+    // ----------------------------------------------------
+    // 3. Title letter‑by‑letter fade‑in animation
+    // ----------------------------------------------------
+    const titleText = 'IGOON.ORG‑AI';
+    const titleEl = document.getElementById('title');
+    [...titleText].forEach((char, i) => {
+      const span = document.createElement('span');
+      span.textContent = char;
+      // Stagger each letter by 0.1s
+      span.style.animationDelay = `${i * 0.1}s`;
+      titleEl.appendChild(span);
+    });
+
+    // ----------------------------------------------------
+    // 4. Smooth scroll for on‑page anchor links (fallback
+    //    for browsers that ignore CSS scroll-behavior)
+    // ----------------------------------------------------
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
       });
-  
-      // Loader fade out effect before starting the boot animation
-      const loader = document.getElementById("loader");
-      setTimeout(() => {
-        loader.classList.add("fade-out");
-        setTimeout(() => {
-          loader.style.display = "none";
-        }, 500);
-      }, 500);
-  
-      // Boot Animation: Letter-by-Letter effect for the logo text
-      const text = "igoon.org";
-      const container = document.getElementById("animation-container");
-      const letterDelay = 150;
-      const animationDuration = 500;
-      const totalLetters = text.length;
-      for (let i = 0; i < totalLetters; i++) {
-        setTimeout(() => {
-          const span = document.createElement("span");
-          span.className = "letter";
-          span.textContent = text[i];
-          container.appendChild(span);
-          span.classList.add("fade-in");
-        }, i * letterDelay);
-      }
-  
-      // Once the boot animation is complete, hide the animation container to reveal the main content
-      const totalAnimationTime = ((totalLetters - 1) * letterDelay) + animationDuration + 300000;
-      setTimeout(() => {
-        container.style.display = "none";
-      }, totalAnimationTime);
     });
   </script>
 </body>
