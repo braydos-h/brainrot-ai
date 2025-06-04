@@ -5,7 +5,7 @@ import psutil
 import os
 from flask import Flask, render_template, request, redirect, url_for, Response, jsonify, session
 
-app = Flask(__name__, template_folder=".")
+app = Flask(__name__, template_folder="templates")
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24))
 
 # Define multiple persona prompts for different modes
