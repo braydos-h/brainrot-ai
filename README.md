@@ -34,3 +34,24 @@ This is a Flask web app that connects to a local [Ollama](https://ollama.com) LL
 ```bash
 git clone https://github.com/braydos-h/IGOON.ORG-AI
 cd multi-persona-chat
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install flask psutil pytest
+```
+
+### 3. Run the App
+
+```bash
+python app.py
+```
+
+## Running Tests
+
+Use `pytest` to run the test suite:
+
+```bash
+pytest
+```
