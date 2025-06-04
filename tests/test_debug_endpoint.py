@@ -12,3 +12,6 @@ def test_debug_endpoint():
         data = response.get_json()
         assert 'cpu_usage' in data
         assert 'ram_usage' in data
+        assert 'disk_usage' in data
+        assert 'ping' in data
+        assert 'wifi' in data
