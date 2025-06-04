@@ -99,9 +99,7 @@ tailwind.config = {
         <button type="submit" class="flex-1 md:flex-none md:w-32 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent1 to-accent2 text-white text-sm font-semibold hover:brightness-110 transition">
           Send
         </button>
-        <form method="post" action="/clear">
-          <button type="submit" class="clear-button inline-flex items-center px-4 py-2 rounded-lg bg-zinc-400/30 hover:bg-zinc-400/50 text-sm">Clear</button>
-        </form>
+        <button type="submit" formaction="/clear" formmethod="post" class="clear-button inline-flex items-center px-4 py-2 rounded-lg bg-zinc-400/30 hover:bg-zinc-400/50 text-sm">Clear</button>
       </div>
     </form>
   </footer>
