@@ -129,6 +129,9 @@ tailwind.config = {
   </div>
 </div>
 
+<!-- Toast message -->
+<div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-accent2 text-white px-3 py-1 rounded hidden"></div>
+
 <!-- ——————————————————  JAVASCRIPT  —————————————————— -->
 <script>
 /* Dark‑mode */
@@ -143,6 +146,7 @@ sbToggle.onclick=()=>sb.classList.toggle('-translate-x-full');
 
 /* Glossary modal */
 const gloss=document.getElementById('glossaryModal');
+const toast=document.getElementById('toast');
 [openGlossary,openGlossaryTop].forEach(btn=>btn.onclick=()=>gloss.classList.remove('hidden','opacity-0'));
 closeGlossary.onclick=()=>gloss.classList.add('hidden');
 window.onclick=e=>{if(e.target===gloss)gloss.classList.add('hidden');};
@@ -155,10 +159,22 @@ document.querySelectorAll('.mode-button').forEach(b=>{
 });
 
 /* Helper: add message bubble */
-function bubble(role,txt){const d=document.createElement('div');d.className=`message ${role} max-w-prose`;d.textContent=txt;chatbox.appendChild(d);chatbox.scrollTop=chatbox.scrollHeight;return d}
+function bubble(role,txt){
+  const d=document.createElement('div');
+  const base='message max-w-prose px-3 py-2 rounded-lg cursor-pointer ';
+  d.className=base+(role==='user'? 'bg-userBubble text-white self-end':'bg-zinc-200 dark:bg-zinc-800');
+  d.textContent=txt;
+  d.title='click to copy';
+  d.onclick=()=>{navigator.clipboard.writeText(d.textContent).then(()=>showToast('Copied!'));};
+  chatbox.appendChild(d);chatbox.scrollTop=chatbox.scrollHeight;return d}
 
 /* Typing indicator */
 function typing(){const d=bubble('ai','');d.innerHTML='<div class="flex gap-1"><span class="animate-bounce">.</span><span class="animate-bounce delay-150">.</span><span class="animate-bounce delay-300">.</span></div>';return d}
+
+function showToast(msg){
+  toast.textContent=msg;toast.classList.remove('hidden');
+  setTimeout(()=>toast.classList.add('hidden'),1500);
+}
 
 /* Streaming logic (IDs unchanged) */
 chatForm.addEventListener('submit',e=>{
