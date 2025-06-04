@@ -2,9 +2,11 @@ import subprocess
 import time
 import re
 import psutil
-from flask import Flask, render_template, request, redirect, url_for, Response, jsonify
+import os
+from flask import Flask, render_template, request, redirect, url_for, Response, jsonify, session
 
 app = Flask(__name__, template_folder=".")
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", os.urandom(24))
 
 # Define multiple persona prompts for different modes
 NERD_PROMPT = (
@@ -75,17 +77,20 @@ MAX_BRAINROT_PROMPT = (
     """
 )
 
-# Global chat history storage 
-chat_history = []
+def get_history():
+    return session.get("chat_history", [])
+
+def save_history(hist):
+    session["chat_history"] = hist
 
 @app.route("/", methods=["GET"])
 def index():
-    return render_template("index.html", chat_history=chat_history)
+    return render_template("index.html", chat_history=get_history())
 
 @app.route("/chat", methods=["GET"])
 @app.route("/chat.html", methods=["GET"])
 def chat_page():
-    return render_template("chat.html", chat_history=chat_history)
+    return render_template("chat.html", chat_history=get_history())
 
 @app.route("/boot", methods=["GET"])
 @app.route("/boot.html", methods=["GET"])
@@ -94,8 +99,7 @@ def boot_page():
 
 @app.route("/clear", methods=["POST"])
 def clear():
-    global chat_history
-    chat_history = []
+    save_history([])
     return redirect(url_for("index"))
 
 @app.route("/generate", methods=["POST"])
@@ -114,17 +118,15 @@ def generate():
     else:
         selected_prompt = BRAINROT_PROMPT
 
-    # Append the user message to chat history
-    #im gonna add the option to save the chat history to a file
-    # chat_history.append({"sender": "assistant", "text": selected_prompt})
-    # chat_history.append({"sender": "assistant", "text": "brainrot mode activated"})
-    # chat_history.append({"sender": "assistant", "text": "nerd mode activated"})
-    # chat_history.append({"sender": "assistant", "text": "max brainrot mode activated"})
-    chat_history.append({"sender": "user", "text": user_text})
+    # Append the user message to the session-specific chat history
+    history = get_history()
+    history.append({"sender": "user", "text": user_text})
+    save_history(history)
     combined_prompt = f"{selected_prompt}\n\n{user_text}"
     cmd = ["ollama", "run", "qwen2.5:1.5b", combined_prompt]
 
     def generate_stream():
+        assistant_resp = ""
         try:
             process = subprocess.Popen(
                 cmd,
@@ -137,11 +139,18 @@ def generate():
             )
             for line in iter(process.stdout.readline, ""):
                 if line:
+                    assistant_resp += line
                     yield line
             process.stdout.close()
             process.wait()
         except Exception as e:
             yield f"\nError running command: {str(e)}"
+        finally:
+            # store the assistant response in chat history
+            if assistant_resp:
+                history = get_history()
+                history.append({"sender": "ai", "text": assistant_resp.strip()})
+                save_history(history)
     
     return Response(generate_stream(), mimetype="text/plain")
 
