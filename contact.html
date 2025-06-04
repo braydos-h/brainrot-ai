@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>igoon.org | Contact</title>
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-color: #000;
+      --hover-primary: #333;
+      --bg-color: #fff;
+      --text-color: #000;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      width: 100%;
+      padding: 20px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-color);
+      border-bottom: 1px solid #ddd;
+    }
+    header .logo {
+      font-size: 1.75rem;
+      font-weight: 700;
+    }
+    header nav {
+      display: flex;
+      gap: 20px;
+    }
+    header nav a {
+      text-decoration: none;
+      color: var(--text-color);
+      font-weight: 500;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    header nav a:hover {
+      color: var(--hover-primary);
+    }
+    .container {
+      max-width: 800px;
+      margin-top: 40px;
+      line-height: 1.6;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    footer {
+      margin-top: auto;
+      padding: 20px 0;
+      width: 100%;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      border-top: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">igoon.org</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="howitworks.html">How It Works</a>
+      <a href="chat.html">Chat</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+  <div class="container">
+    <h1>Contact Us</h1>
+    <p style="margin-top:20px">Have questions or feedback? Reach us at
+      <a href="mailto:contact@igoon.org">contact@igoon.org</a>.
+    </p>
+  </div>
+  <footer>
+    &copy; 2025 igoon.org. All rights reserved.
+  </footer>
+</body>
+</html>
