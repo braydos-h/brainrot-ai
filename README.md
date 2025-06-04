@@ -55,3 +55,7 @@ Use `pytest` to run the test suite:
 ```bash
 pytest
 ```
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
