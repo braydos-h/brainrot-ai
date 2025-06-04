@@ -39,7 +39,7 @@ cd multi-persona-chat
 ### 2. Install Dependencies
 
 ```bash
-pip install flask psutil pytest
+pip install flask psutil pytest flake8
 ```
 
 ### 3. Run the App
@@ -54,4 +54,18 @@ Use `pytest` to run the test suite:
 
 ```bash
 pytest
+```
+
+## Linting
+
+Run [Flake8](https://flake8.pycqa.org/) to check code style:
+
+```bash
+flake8
+```
+
+Alternatively, use the `make lint` command if you have `make` installed:
+
+```bash
+make lint
 ```
