@@ -39,7 +39,7 @@ cd multi-persona-chat
 ### 2. Install Dependencies
 
 ```bash
-pip install flask psutil pytest
+pip install -r requirements.txt
 ```
 
 ### 3. Run the App
