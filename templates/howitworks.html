@@ -6,13 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>igoon.org | How It Works</title>
   <!-- Google Font for a modern look -->
-  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --primary-color: #000;
-      --hover-primary: #333;
-      --bg-color: #fff;
-      --text-color: #000;
+      --accent1: #7c3aed;
+      --accent2: #6366f1;
+      --bg: #fff;
+      --text: #111;
+    }
+    .dark {
+      --bg: #0e0e14;
+      --text: #e6e6eb;
     }
     /* Global Reset */
     * {
@@ -22,9 +26,9 @@
     }
     /* Base Body Styling */
     body {
-      font-family: 'Lato', sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
+      font-family: Inter, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -34,12 +38,12 @@
     /* Header styling with navigation */
     header {
       width: 100%;
-      padding: 20px 5%;
+      padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: var(--bg-color);
-      border-bottom: 1px solid #ddd;
+      background: var(--bg);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
     }
     header .logo {
       font-size: 1.75rem;
@@ -47,22 +51,26 @@
     }
     header nav {
       display: flex;
-      gap: 20px;
+      gap: 1rem;
     }
     header nav a {
       text-decoration: none;
-      color: var(--text-color);
+      color: inherit;
       font-weight: 500;
       text-transform: uppercase;
-      transition: color 0.3s;
+      transition: opacity 0.3s;
     }
     header nav a:hover {
-      color: var(--hover-primary);
+      opacity: 0.7;
+    }
+    .toggle {
+      margin-left: 1rem;
+      cursor: pointer;
     }
     /* Main Container for Content */
     .container {
-      max-width: 800px;
-      margin-top: 40px;
+      width: min(92%, 800px);
+      margin-top: 3rem;
       line-height: 1.6;
       font-size: 1.1rem;
     }
@@ -77,7 +85,7 @@
     /* Footer styling */
     footer {
       margin-top: auto;
-      padding: 20px 0;
+      padding: 1.5rem 0;
       width: 100%;
       text-align: center;
       font-size: 0.9rem;
@@ -114,6 +122,7 @@
       <a href="howitworks.html">How It Works</a>
       <a href="chat.html">Chat</a>
       <a href="contact.html">Contact</a>
+      <span id="darkToggle" class="toggle">🌓</span>
     </nav>
   </header>
 
@@ -151,5 +160,12 @@
   <footer>
     &copy; 2025 igoon.org. All rights reserved.
   </footer>
+  <script>
+    const root=document.documentElement,
+      darkT=document.getElementById('darkToggle');
+    const setTheme=m=>m==='dark'?root.classList.add('dark'):root.classList.remove('dark');
+    setTheme(localStorage.theme||'light');
+    darkT.onclick=()=>{const m=root.classList.toggle('dark')?'dark':'light';localStorage.theme=m};
+  </script>
 </body>
 </html>
