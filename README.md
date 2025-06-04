@@ -34,3 +34,4 @@ This is a Flask web app that connects to a local [Ollama](https://ollama.com) LL
 ```bash
 git clone https://github.com/braydos-h/IGOON.ORG-AI
 cd multi-persona-chat
+pip install -r requirements.txt
