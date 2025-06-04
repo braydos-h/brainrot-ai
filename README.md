@@ -48,6 +48,27 @@ pip install flask psutil pytest flake8
 python app.py
 ```
 
+## Configuration
+
+### `FLASK_SECRET_KEY`
+
+Set this environment variable before starting the server if you want persistent
+sessions. Otherwise the app will generate a random key each time it launches,
+which resets session data on restart.
+
+### Ollama Backend
+
+The application relies on the `ollama` CLI being installed. The command
+`ollama run qwen2.5:1.5b` in `app.py` starts the chat model. If you prefer a
+different model, point the `ollama` command to it, for example:
+
+```bash
+ollama run llama2:7b
+```
+
+Make sure the desired model is available locally via `ollama pull` or by other
+means.
+
 ## Running Tests
 
 Use `pytest` to run the test suite:
